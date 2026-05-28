@@ -114,3 +114,24 @@ Instance storage in Soroban has a TTL (time-to-live) and will expire if not peri
 - Checks the entire file, not per function.
 
 **Fixture:** `test-contracts/instance-ttl-vulnerable/`, `test-contracts/instance-ttl-safe/`
+
+---
+
+## `unauthorized-storage-read` (Medium)
+
+**Status:** Phase 1
+
+**What it detects**
+
+Storage `get` or `has` calls in `#[contractimpl]` functions that do not have a corresponding `env.require_auth()` call in the same function.
+
+**Why it matters**
+
+Unauthorized storage reads can expose sensitive data to unauthorized callers. Proper authorization should be enforced before accessing sensitive storage.
+
+**Limitations**
+
+- Only detects direct auth calls in the same function, not through helper functions
+- May miss cases where auth is performed on a different variable name
+
+**Fixture:** `test-contracts/unauthorized-storage-read-vulnerable/`, `test-contracts/unauthorized-storage-read-safe/`
