@@ -30,7 +30,6 @@ pub mod current_contract_unwrap;
 pub mod debug_entrypoint;
 pub mod decimals_mismatch;
 pub mod deploy_arg_auth;
-pub mod deploy_arg_auth;
 pub mod dynamic_symbol_key;
 pub mod env_in_struct;
 pub mod event_duplicate;
@@ -39,6 +38,7 @@ pub mod event_topic_runtime_string;
 pub mod extend_ttl_in_loop;
 pub mod float_arithmetic;
 pub mod hash_as_storage_key;
+pub mod auth_temp_storage;
 pub mod host_result_ignored;
 pub mod i128_to_u64;
 pub mod instance_domain_mixing;
@@ -49,6 +49,8 @@ pub mod instance_vec_growth;
 pub mod invoke_store_no_event;
 pub mod invoke_unchecked_cast;
 pub mod key_length_exceeded;
+pub mod loop_bound_no_cap;
+pub mod nested_loop_storage;
 pub mod key_prefix_collision;
 pub mod linear_whitelist_scan;
 pub mod lock_period_truncation;
@@ -105,6 +107,7 @@ pub mod unbounded_input_storage;
 pub mod unbounded_storage;
 pub mod uncapped_fee;
 pub mod uncapped_slippage;
+pub mod storage_key_collision;
 pub mod unlimited_allowance;
 pub mod unvalidated_invoke_target;
 pub mod unvalidated_price;
@@ -150,7 +153,6 @@ pub use current_contract_unwrap::CurrentContractUnwrapCheck;
 pub use debug_entrypoint::DebugEntrypointCheck;
 pub use decimals_mismatch::DecimalsMismatchCheck;
 pub use deploy_arg_auth::DeployArgAuthCheck;
-pub use deploy_arg_auth::DeployArgAuthCheck;
 pub use dynamic_symbol_key::DynamicSymbolKeyCheck;
 pub use env_in_struct::EnvInStructCheck;
 pub use event_duplicate::EventDuplicateCheck;
@@ -159,6 +161,7 @@ pub use event_topic_runtime_string::EventTopicRuntimeStringCheck;
 pub use extend_ttl_in_loop::ExtendTtlInLoopCheck;
 pub use float_arithmetic::FloatArithmeticCheck;
 pub use hash_as_storage_key::HashAsStorageKeyCheck;
+pub use auth_temp_storage::AuthTempStorageCheck;
 pub use host_result_ignored::HostResultIgnoredCheck;
 pub use i128_to_u64::I128ToU64Check;
 pub use instance_domain_mixing::InstanceDomainMixingCheck;
@@ -225,6 +228,7 @@ pub use unbounded_input_storage::UnboundedInputStorageCheck;
 pub use unbounded_storage::UnboundedStorageCheck;
 pub use uncapped_fee::UncappedFeeCheck;
 pub use uncapped_slippage::UncappedSlippageCheck;
+pub use storage_key_collision::StorageKeyCollisionCheck;
 pub use unlimited_allowance::UnlimitedAllowanceCheck;
 pub use unvalidated_price::UnvalidatedPriceCheck;
 pub use vec_mutate_in_loop::VecMutateInLoopCheck;
@@ -316,6 +320,7 @@ pub fn default_checks() -> Vec<Box<dyn Check + Send + Sync>> {
         Box::new(DebugEntrypointCheck),
         Box::new(ExtendTtlInLoopCheck),
         Box::new(HashAsStorageKeyCheck),
+        Box::new(StorageKeyCollisionCheck),
         Box::new(UnauthAddressInStructCheck),
         Box::new(InvokeUncheckedCastCheck),
         Box::new(InvokeFuncFromInputCheck),
