@@ -114,3 +114,24 @@ Instance storage in Soroban has a TTL (time-to-live) and will expire if not peri
 - Checks the entire file, not per function.
 
 **Fixture:** `test-contracts/instance-ttl-vulnerable/`, `test-contracts/instance-ttl-safe/`
+
+---
+
+## `storage-type-version` (Medium)
+
+**Status:** Phase 1
+
+**What it detects**
+
+Inconsistent use of storage types in the same contract, such as mixing persistent, instance, and temporary storage tiers.
+
+**Why it matters**
+
+Using multiple storage tiers can lead to unexpected behavior, increased complexity, and potential security vulnerabilities. Consistent storage usage improves predictability and maintainability.
+
+**Limitations**
+
+- Only detects direct storage type usage, not through helper functions
+- May flag legitimate cases where different storage tiers are intentionally used for different purposes
+
+**Fixture:** `test-contracts/storage-type-version-vulnerable/`, `test-contracts/storage-type-version-safe/`
