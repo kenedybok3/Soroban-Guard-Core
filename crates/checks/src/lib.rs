@@ -2,6 +2,8 @@
 
 pub mod address_from_str;
 pub mod admin;
+pub mod admin_no_group_auth;
+pub mod admin_zero_address;
 pub mod admin_in_temp;
 pub mod admin_no_event;
 pub mod balance_negative_check;
@@ -119,6 +121,8 @@ pub mod renounce_no_backup;
 
 pub use address_from_str::AddressFromStrCheck;
 pub use admin::UnprotectedAdminCheck;
+pub use admin_no_group_auth::AdminNoGroupAuthCheck;
+pub use admin_zero_address::AdminZeroAddressCheck;
 pub use admin_in_temp::AdminInTempCheck;
 pub use admin_no_event::AdminNoEventCheck;
 pub use balance_negative_check::BalanceNegativeCheck;
@@ -340,5 +344,9 @@ pub fn default_checks() -> Vec<Box<dyn Check + Send + Sync>> {
         Box::new(TokenSharedStorageCheck),
         Box::new(AdminNoEventCheck),
         Box::new(TierKeyCollisionCheck),
+        Box::new(AdminZeroAddressCheck),
+        Box::new(AdminNoGroupAuthCheck),
+        Box::new(OwnershipPendingNotClearedCheck),
+        Box::new(OwnershipNoApprovalInvalidationCheck),
     ]
 }
