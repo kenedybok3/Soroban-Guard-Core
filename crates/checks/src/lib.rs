@@ -50,6 +50,7 @@ pub mod invoke_store_no_event;
 pub mod invoke_unchecked_cast;
 pub mod key_length_exceeded;
 pub mod key_prefix_collision;
+pub mod keccak_misuse;
 pub mod linear_whitelist_scan;
 pub mod lock_period_truncation;
 pub mod map_get_unwrap;
@@ -169,6 +170,7 @@ pub use instance_vec_growth::InstanceVecGrowthCheck;
 pub use invoke_store_no_event::InvokeStoreNoEventCheck;
 pub use invoke_unchecked_cast::InvokeUncheckedCastCheck;
 pub use key_prefix_collision::KeyPrefixCollisionCheck;
+pub use keccak_misuse::KeccakMisuseCheck;
 pub use linear_whitelist_scan::LinearWhitelistScanCheck;
 pub use lock_period_truncation::LockPeriodTruncationCheck;
 pub use loop_bound_no_cap::LoopBoundNoCapCheck;
@@ -294,6 +296,7 @@ pub fn default_checks() -> Vec<Box<dyn Check + Send + Sync>> {
         Box::new(AmountMulOverflowCheck),
         Box::new(FloatArithmeticCheck),
         Box::new(WeakRandomnessCheck),
+        Box::new(KeccakMisuseCheck),
         Box::new(ReentrancyCheck),
         Box::new(TokenTransferUncheckedCheck),
         Box::new(ContracterrorAttrCheck),
