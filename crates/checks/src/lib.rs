@@ -77,6 +77,7 @@ pub mod renounce_no_backup;
 pub mod runtime_symbol;
 pub mod secp256k1_unchecked;
 pub mod self_transfer;
+pub mod sig_verify_inverted;
 pub mod sequence_as_key;
 pub mod sequence_nonce;
 pub mod storage;
@@ -198,6 +199,7 @@ pub use renounce_no_backup::RenounceNoBackupCheck;
 pub use runtime_symbol::RuntimeSymbolCheck;
 pub use secp256k1_unchecked::Secp256k1UncheckedCheck;
 pub use self_transfer::SelfTransferCheck;
+pub use sig_verify_inverted::SigVerifyInvertedCheck;
 pub use sequence_as_key::SequenceAsKeyCheck;
 pub use sequence_nonce::SequenceNonceCheck;
 pub use storage::UnsafeStoragePatternsCheck;
@@ -351,5 +353,6 @@ pub fn default_checks() -> Vec<Box<dyn Check + Send + Sync>> {
         Box::new(AdminNoGroupAuthCheck),
         Box::new(OwnershipPendingNotClearedCheck),
         Box::new(OwnershipNoApprovalInvalidationCheck),
+        Box::new(SigVerifyInvertedCheck),
     ]
 }
