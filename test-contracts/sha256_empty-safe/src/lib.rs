@@ -1,5 +1,5 @@
 #![no_std]
-use soroban_sdk::{contract, contractimpl, Env};
+use soroban_sdk::{contract, contractimpl, Bytes, Env};
 
 #[contract]
 pub struct Sha256EmptySafe;

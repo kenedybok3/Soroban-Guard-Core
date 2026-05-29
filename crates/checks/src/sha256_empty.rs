@@ -1,5 +1,5 @@
-//! Detects `env.crypto().sha256()` called on an empty input.
-//! Hashing empty data produces a known constant hash, which is usually a bug
+//! Detects `env.crypto().sha256()` or `env.crypto().keccak256()` called on an empty input.
+//! Hashing empty data produces a well-known constant digest, which is usually a bug
 //! when used as a commitment or identifier.
 
 use crate::util::contractimpl_functions;
@@ -38,7 +38,7 @@ struct Sha256EmptyScan<'a> {
 
 impl<'ast> Visit<'ast> for Sha256EmptyScan<'_> {
     fn visit_expr_method_call(&mut self, i: &'ast ExprMethodCall) {
-        if is_sha256_call(i) && has_empty_argument(i) {
+        if is_crypto_hash_call(i) && has_empty_argument(i) {
             let line = i.span().start().line;
             self.out.push(Finding {
                 check_name: CHECK_NAME.to_string(),
@@ -47,9 +47,10 @@ impl<'ast> Visit<'ast> for Sha256EmptyScan<'_> {
                 line,
                 function_name: self.fn_name.clone(),
                 description: format!(
-                    "Method `{}` calls `env.crypto().sha256()` on an empty input. "
+                    "Method `{}` calls `env.crypto().{}` on an empty input. "
                     "Hashing empty data yields a known constant digest and is likely a bug.",
-                    self.fn_name
+                    self.fn_name,
+                    i.method
                 ),
             });
         }
@@ -57,8 +58,8 @@ impl<'ast> Visit<'ast> for Sha256EmptyScan<'_> {
     }
 }
 
-fn is_sha256_call(m: &ExprMethodCall) -> bool {
-    if m.method != "sha256" {
+fn is_crypto_hash_call(m: &ExprMethodCall) -> bool {
+    if m.method != "sha256" && m.method != "keccak256" {
         return false;
     }
     if let Expr::MethodCall(inner) = &*m.receiver {
@@ -79,7 +80,7 @@ fn has_empty_argument(m: &ExprMethodCall) -> bool {
 fn is_empty_expr(expr: &Expr) -> bool {
     match expr {
         Expr::Reference(ExprReference { expr: inner, .. }) => is_empty_expr(inner),
-        Expr::MethodCall(call) => is_bytes_new_empty(call),
+        Expr::MethodCall(call) => is_bytes_empty_constructor(call),
         Expr::Array(ExprArray { elems, .. }) => elems.is_empty(),
         Expr::Lit(lit) => match &lit.lit {
             Lit::ByteStr(bs) => bs.value().is_empty(),
@@ -89,8 +90,8 @@ fn is_empty_expr(expr: &Expr) -> bool {
     }
 }
 
-fn is_bytes_new_empty(call: &ExprMethodCall) -> bool {
-    if call.method != "new" || call.args.len() != 1 {
+fn is_bytes_empty_constructor(call: &ExprMethodCall) -> bool {
+    if call.args.is_empty() {
         return false;
     }
     if let Expr::Path(ExprPath { path, .. }) = &*call.receiver {
@@ -100,9 +101,18 @@ fn is_bytes_new_empty(call: &ExprMethodCall) -> bool {
             .map(|s| s.ident.to_string())
             .collect::<Vec<_>>()
             .join("::");
-        return receiver == "Bytes";
+        if !receiver.ends_with("Bytes") {
+            return false;
+        }
+    } else {
+        return false;
     }
-    false
+
+    match call.method.as_str() {
+        "new" => call.args.len() == 1,
+        "from_slice" => call.args.len() == 2 && is_empty_expr(&call.args[1]),
+        _ => false,
+    }
 }
 
 #[cfg(test)]
@@ -124,6 +134,21 @@ impl MyContract {
         let findings = Sha256EmptyCheck.run(&file, code);
         assert_eq!(findings.len(), 1);
         assert_eq!(findings[0].severity, Severity::Low);
+    }
+
+    #[test]
+    fn flags_keccak256_on_bytes_from_slice_empty() {
+        let code = r#"
+#[contractimpl]
+impl MyContract {
+    pub fn commit(env: Env) {
+        let hash = env.crypto().keccak256(&Bytes::from_slice(&env, &[]));
+    }
+}
+"#;
+        let file = parse_file(code).unwrap();
+        let findings = Sha256EmptyCheck.run(&file, code);
+        assert_eq!(findings.len(), 1);
     }
 
     #[test]
