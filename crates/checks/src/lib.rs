@@ -7,6 +7,7 @@ pub mod admin_no_group_auth;
 pub mod admin_zero_address;
 pub mod admin_in_temp;
 pub mod admin_key_removal;
+pub mod no_admin;
 pub mod admin_no_event;
 pub mod admin_overwrite;
 pub mod amount_mul_overflow;
@@ -130,6 +131,7 @@ pub use admin_key_removal::AdminKeyRemovalCheck;
 pub use admin_no_event::AdminNoEventCheck;
 pub use admin_overwrite::AdminOverwriteCheck;
 pub use amount_mul_overflow::AmountMulOverflowCheck;
+pub use no_admin::NoAdminCheck;
 pub use assert_for_auth::AssertForAuthCheck;
 pub use auth::MissingRequireAuthCheck;
 pub use auth_loop_dos::AuthLoopDosCheck;
@@ -278,6 +280,7 @@ pub fn default_checks() -> Vec<Box<dyn Check + Send + Sync>> {
         Box::new(UnprotectedAdminCheck),
         Box::new(AdminOverwriteCheck),
         Box::new(AdminKeyRemovalCheck),
+        Box::new(NoAdminCheck),
         Box::new(UnsafeStoragePatternsCheck),
         Box::new(InstanceDomainMixingCheck),
         Box::new(PanicUsageCheck),
