@@ -410,6 +410,7 @@ pub fn default_checks() -> Vec<Box<dyn Check + Send + Sync>> {
         Box::new(AdminNoEventCheck),
         Box::new(UnauthorizedStorageReadCheck),
         Box::new(TierKeyCollisionCheck),
+        Box::new(StorageTypeVersionCheck),
         Box::new(AdminZeroAddressCheck),
         Box::new(AdminNoGroupAuthCheck),
         Box::new(AdminNoRemoveCheck),
