@@ -89,6 +89,7 @@ pub mod persistent_for_temp;
 pub mod persistent_overwrite;
 pub mod redundant_auth_args;
 pub mod reentrancy;
+pub mod result_err_ignored;
 pub mod renounce_no_backup;
 pub mod runtime_symbol;
 pub mod secp256k1_unchecked;
@@ -226,6 +227,7 @@ pub use persistent_for_temp::PersistentForTempCheck;
 pub use persistent_overwrite::PersistentOverwriteCheck;
 pub use redundant_auth_args::RedundantAuthArgsCheck;
 pub use reentrancy::ReentrancyCheck;
+pub use result_err_ignored::ResultErrIgnoredCheck;
 pub use renounce_no_backup::RenounceNoBackupCheck;
 pub use runtime_symbol::RuntimeSymbolCheck;
 pub use secp256k1_unchecked::Secp256k1UncheckedCheck;
@@ -330,6 +332,7 @@ pub fn default_checks() -> Vec<Box<dyn Check + Send + Sync>> {
         Box::new(FloatArithmeticCheck),
         Box::new(WeakRandomnessCheck),
         Box::new(ReentrancyCheck),
+        Box::new(ResultErrIgnoredCheck),
         Box::new(TokenTransferUncheckedCheck),
         Box::new(ContracterrorAttrCheck),
         Box::new(TokenBurnAuthCheck),
